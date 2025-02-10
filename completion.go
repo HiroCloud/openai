@@ -2,6 +2,7 @@ package openai
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 )
 
@@ -218,6 +219,16 @@ type CompletionResponse struct {
 	Usage   Usage              `json:"usage"`
 
 	httpHeader
+}
+
+func AddSupportForModels(endpoint string, models ...string) error {
+	if _, found := disabledModelsForEndpoints[endpoint]; !found {
+		return fmt.Errorf("unknown endpoint: %s", endpoint)
+	}
+	for _, model := range models {
+		disabledModelsForEndpoints[endpoint][model] = true
+	}
+	return nil
 }
 
 // CreateCompletion — API call to create a completion. This is the main endpoint of the API. Returns new text as well
